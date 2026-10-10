@@ -181,8 +181,10 @@ body[data-zoom="memo"] textarea.memo{font-size:16px;line-height:1.7;padding:16px
 .frow{display:flex;padding:8px 16px}
 .frow input{flex:1;min-width:0;background:var(--field);border:0;border-radius:10px;padding:11px 13px;font-size:15px}
 .frow input:focus{outline:2px solid var(--indigo);outline-offset:-1px}
-.go2{flex:1;background:var(--navy);color:#fff;border-radius:10px;padding:11px;font-size:15px;font-weight:650}
-.go2.sec{background:var(--field);color:var(--ink)}
+.go2{flex:1 1 0;min-width:0;height:46px;display:grid;place-items:center;text-align:center;
+ background:var(--navy);color:#fff;border-radius:10px;padding:0 10px;font-size:15px;font-weight:650;
+ line-height:1;border:1px solid transparent;white-space:nowrap}
+.go2.sec{background:var(--field);color:var(--ink);border-color:var(--line)}
 .lnk{font-size:12.5px;color:var(--ink-3)}
 .pop.left{left:12px;right:auto;transform-origin:top left}
 .hsec-memo{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
@@ -775,7 +777,7 @@ textarea.memo{flex:1;min-height:0;width:100%;resize:none;background:var(--field)
   <div class="pop-title">동기화 · 알림</div>
   <div class="sync"><i id="syncDot"></i><span id="syncTxt">확인 중…</span></div>
   <div class="setrow"><label>하루 전 알림</label><select id="alertH"></select></div>
-  <div class="setrow"><label>버전</label><span style="font-size:13px;color:var(--ink-2)">v45</span></div>
+  <div class="setrow"><label>버전</label><span style="font-size:13px;color:var(--ink-2)">v46</span></div>
   <div class="setrow"><label>앱으로 설치</label><button id="instBtn">방법 보기</button></div>
   <div class="setrow"><label>분류 설정</label><button id="catSetBtn">열기</button></div>
   <div class="setrow"><label>계정 · 기기 연동</label><button id="acctBtn">열기</button></div>
