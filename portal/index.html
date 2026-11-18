@@ -5,6 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>try{var t=localStorage.getItem("cm-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <title>Construction Management 포털</title>
+<meta name="description" content="건설사업관리(CM)의 서비스 범위, 업무 흐름, CM 방식 비교, FAQ를 안내하는 소개용 샘플 페이지입니다.">
+<link rel="canonical" href="https://kth12129-cmd.github.io/portal/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CM Portal">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="Construction Management 포털">
+<meta property="og:description" content="건설사업관리(CM)의 서비스 범위, 업무 흐름, CM 방식 비교, FAQ를 안내하는 소개용 샘플 페이지입니다.">
+<meta property="og:url" content="https://kth12129-cmd.github.io/portal/">
+<meta property="og:image" content="https://kth12129-cmd.github.io/portal/files/preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Construction Management 건설사업관리 소개 포털 대표 이미지">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Construction Management 포털">
+<meta name="twitter:description" content="건설사업관리(CM)의 서비스 범위, 업무 흐름, CM 방식 비교, FAQ를 안내하는 소개용 샘플 페이지입니다.">
+<meta name="twitter:image" content="https://kth12129-cmd.github.io/portal/files/preview.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230a0a0a%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%23fff%27/%3E%3C/svg%3E">
 <style>
 :root,html[data-theme="dark"]{
   --canvas:#0a0a0a; --canvas-rgb:10,10,10; --soft:#1a1c20; --card:#191919; --mid:#363a3f; --hair:#212327;
@@ -263,6 +281,11 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block}
 .sc-key.eq:hover{background:var(--inkh)}
 .sc-key:active{transform:scale(.97)}
 .sc-key:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* 공개 점검 반영: 터치 영역·가독성 */
+.chip{min-height:44px;padding:10px 16px}
+.brand{min-height:44px}
+.cat-tag,.tag,.fl-ico,.fl-path,.step small{font-size:13px}
 </style>
 </head>
 <body>
@@ -351,7 +374,7 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block}
         <p>발주처의 대리인으로서 용역 수수료를 받고 관리 업무를 수행하는 방식입니다.</p>
         <dl>
           <dt>역할</dt><dd>설계·발주·시공 전 과정에서 발주처를 자문하고 시공자 등 참여 주체를 관리·조정</dd>
-          <dt>책임</dt><dd>전문가로서의 관리 업무 수행 책임. 공사비·공기에 대한 직접적인 결과 보증 책임은 지지 않음</dd>
+          <dt>책임</dt><dd>전문가로서의 관리 업무 수행 책임. 공사비·공기에 대한 직접적인 결과 보증 책임은 일반적으로 지지 않으며, 계약조건에 따라 달라질 수 있음</dd>
           <dt>특징</dt><dd>발주처와 이해관계가 일치하여 객관적·독립적 관점 유지에 유리. 시공은 별도 시공자와 계약</dd>
         </dl>
       </article>
@@ -466,7 +489,7 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block}
     <div id="faqList">
       <details class="faq" data-cat="기본"><summary>CM(건설사업관리)이란 무엇인가요?</summary><div class="ans">발주처를 대신해 기획, 설계, 발주, 시공, 사후관리 전 과정에서 공사비·공기·품질·안전을 관리하는 전문 서비스입니다.</div></details>
       <details class="faq" data-cat="기본"><summary>CM은 어느 단계부터 참여하는 것이 효과적인가요?</summary><div class="ans">기획·설계 단계부터 참여할수록 설계 검토와 공사비 예측에서 효과가 큽니다. 시공 단계에서만 참여하면 설계 변경 여지가 작아 개선 폭이 제한될 수 있습니다.</div></details>
-      <details class="faq" data-cat="방식·계약"><summary>CM for Fee와 CM at Risk의 가장 큰 차이는 무엇인가요?</summary><div class="ans">CM for Fee는 수수료를 받고 관리 업무에 집중하며 공사비·공기 결과에 대한 보증 책임은 지지 않습니다. CM at Risk는 합의된 공사비 상한과 공기 준수에 대한 책임을 일부 부담한다는 점이 다릅니다.</div></details>
+      <details class="faq" data-cat="방식·계약"><summary>CM for Fee와 CM at Risk의 가장 큰 차이는 무엇인가요?</summary><div class="ans">CM for Fee는 수수료를 받고 관리 업무에 집중하며, 일반적으로 공사비·공기 결과에 대한 보증 책임은 지지 않습니다(세부 책임은 계약조건에 따름). CM at Risk는 합의된 공사비 상한과 공기 준수에 대한 책임을 일부 부담한다는 점이 다릅니다.</div></details>
       <details class="faq" data-cat="방식·계약"><summary>CM 방식은 어떻게 선택하나요?</summary><div class="ans">사업 규모, 설계 확정 정도, 공사비 확실성에 대한 요구 수준, 발주처의 내부 관리 역량을 종합해 선택합니다. 공공사업은 적용 가능한 계약 방식이 관련 법령과 발주기관 기준에 따라 제한될 수 있으므로 확인이 필요합니다.</div></details>
       <details class="faq" data-cat="방식·계약"><summary>CM 수수료는 어떻게 정해지나요?</summary><div class="ans">업무 범위, 사업 규모, 투입 인력, 계약 방식에 따라 정해집니다. 구체적인 산정 기준은 발주처 계약조건과 관련 기준을 확인해야 합니다.</div></details>
       <details class="faq" data-cat="공정·품질"><summary>공정 지연이 발생하면 CM은 어떤 조치를 하나요?</summary><div class="ans">지연 원인을 분석하고 공기 영향을 산정한 뒤, 인력·장비 보강이나 공정 조정 등 만회 대책을 시공자와 협의하여 발주처에 보고합니다.</div></details>
@@ -485,16 +508,12 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block}
     <div class="sec-head">
       <span class="eyebrow">Resources</span>
       <h2>자료실</h2>
-      <p>CM 서비스 소개서, 공개 실적 요약, 업무 가이드를 내려받을 수 있습니다.</p>
+      <p>CM 서비스 요약본과 업무 가이드, 소개서·관리기준 PDF를 내려받을 수 있습니다.</p>
     </div>
     <div class="grid g3">
       <div class="card dl">
-        <div><div class="ico">⇩</div><h3>CM 서비스 소개서</h3><p>CM 서비스의 범위와 수행 체계를 요약한 소개 자료입니다.</p><p class="meta">형식: 텍스트(.txt) · 샘플</p></div>
-        <button class="btn btn-teal" data-doc="intro">소개서 다운로드</button>
-      </div>
-      <div class="card dl">
-        <div><div class="ico">⇩</div><h3>공개 실적 요약</h3><p>공개 가능한 수행 실적을 사업별로 정리하는 양식입니다.</p><p class="meta">형식: 텍스트(.txt) · 양식(실적 미기재)</p></div>
-        <button class="btn btn-teal" data-doc="record">실적 요약 다운로드</button>
+        <div><div class="ico">⇩</div><h3>CM 서비스 요약본</h3><p>CM 서비스의 범위와 수행 단계를 한 장으로 요약한 텍스트 자료입니다. 자세한 내용은 아래 PDF 소개서를 이용하세요.</p><p class="meta">형식: 텍스트(.txt) · 샘플</p></div>
+        <button class="btn btn-teal" data-doc="intro">요약본 다운로드</button>
       </div>
       <div class="card dl">
         <div><div class="ico">⇩</div><h3>CM 업무 가이드</h3><p>단계별 주요 업무와 점검 항목을 정리한 실무 가이드입니다.</p><p class="meta">형식: 텍스트(.txt) · 샘플</p></div>
@@ -637,9 +656,8 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block}
 
   /* 자료실 (샘플 문서를 즉시 생성하여 다운로드) */
   var docs={
-    intro:{name:'CM_서비스_소개서.txt',body:'[CM 서비스 소개서 - 샘플]\r\n\r\n1. CM 서비스 개요\r\n- 발주처를 대신해 사업 전 과정을 관리하는 건설사업관리 서비스\r\n\r\n2. 수행 단계\r\n- 기획 → 설계 → 발주 → 시공 → 사후관리\r\n\r\n3. 핵심 관리 영역\r\n- 공정, 품질, 안전, 원가\r\n\r\n4. CM 방식\r\n- CM for Fee / CM at Risk\r\n\r\n※ 본 문서는 안내용 샘플입니다. 실제 자료로 교체하여 사용하세요.\r\n'},
-    record:{name:'CM_공개_실적_요약_양식.txt',body:'[CM 공개 실적 요약 - 양식]\r\n\r\n※ 아래 항목을 공개 가능한 실제 실적으로 채워 사용하세요. (본 양식에는 실적이 기재되어 있지 않습니다.)\r\n\r\n사업명 : \r\n발주처 : \r\n사업 위치 : \r\n수행 기간 : \r\n수행 단계 : (기획 / 설계 / 발주 / 시공 / 사후관리)\r\nCM 방식 : (CM for Fee / CM at Risk)\r\n주요 수행 업무 : \r\n성과 요약 : \r\n\r\n[주의] 발주처·계약 상 공개가 제한된 정보는 기재하지 마세요.\r\n'},
-    guide:{name:'CM_업무_가이드.txt',body:'[CM 업무 가이드 - 샘플]\r\n\r\n■ 기획: 사업 타당성, 예산·일정 초안, CM 방식 선정\r\n■ 설계: 설계 검토, VE, 설계 변경 통제\r\n■ 발주: 입찰 서류, 계약조건 검토, 시공자 선정 지원\r\n■ 시공: 공정·품질·안전·원가 관리, 기성·정산 검토\r\n■ 사후관리: 준공 검사, 최종 정산, 하자보수 관리\r\n\r\n※ 본 문서는 안내용 샘플입니다. 실제 자료로 교체하여 사용하세요.\r\n'}
+    intro:{name:'CM_서비스_요약본.txt',body:'[CM 서비스 요약본 - 샘플]\r\n\r\n1. CM 서비스 개요\r\n- 발주처를 대신해 사업 전 과정을 관리하는 건설사업관리 서비스\r\n\r\n2. 수행 단계\r\n- 기획 → 설계 → 발주 → 시공 → 사후관리\r\n\r\n3. 핵심 관리 영역\r\n- 공정, 품질, 안전, 원가\r\n\r\n4. CM 방식\r\n- CM for Fee / CM at Risk\r\n\r\n※ 본 문서는 안내용 샘플이며, 실제 현장·계약 기준을 대체하지 않습니다.\r\n'},
+    guide:{name:'CM_업무_가이드.txt',body:'[CM 업무 가이드 - 샘플]\r\n\r\n■ 기획: 사업 타당성, 예산·일정 초안, CM 방식 선정\r\n■ 설계: 설계 검토, VE, 설계 변경 통제\r\n■ 발주: 입찰 서류, 계약조건 검토, 시공자 선정 지원\r\n■ 시공: 공정·품질·안전·원가 관리, 기성·정산 검토\r\n■ 사후관리: 준공 검사, 최종 정산, 하자보수 관리\r\n\r\n※ 본 문서는 안내용 샘플이며, 실제 현장·계약 기준을 대체하지 않습니다.\r\n'}
   };
   var tt;
   function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},2600)}
