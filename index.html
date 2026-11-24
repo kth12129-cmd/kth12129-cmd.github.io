@@ -6384,7 +6384,7 @@ function ntcShow(title,msg,act,actLabel){
   const x=document.createElement('button');x.textContent='확인';x.onclick=close;r.appendChild(x);
   d.append(b,p,r);box.appendChild(d);box.classList.add('on');
 }
-const RELNOTE='그룹 화면에서 구성원을 추가했을 때 반영되지 않거나 오류가 조용히 사라지던 문제를 고쳤어요. 추가하면 바로 그 그룹 목록에 나오고, 실패하면 이유가 화면에 떠요. 캡처에서 "11/26(목) 限"처럼 날짜만 있는 줄도 앞 제목 줄을 가져오고, 글자 인식이 이름을 한 글자 틀리게 읽어도 내 담당 줄을 찾아요.';
+const RELNOTE='그룹 화면에서 사람을 선택해도 메일·문자 보내기가 동작하지 않던 문제를 고쳤어요. 선택한 사람 중 메일/연락처가 없으면 안내가 떠요.';
 function verNotice(){
   let last=null;try{last=localStorage.getItem('tyLastVer');localStorage.setItem('tyLastVer',APPVER);}catch(_){return;}
   if(last&&last!==APPVER)ntcShow('최신 버전으로 업데이트되었습니다',APPVER+' · '+RELNOTE);
@@ -7327,6 +7327,7 @@ document.addEventListener('contextmenu',e=>{const r=e.target.closest&&e.target.c
 function orgRender(){
   const box=$('tmBody');
   orgSoft();
+  try{if(orgD){const ok=new Set(orgVisible().map(p=>p.id));[...orgPh].forEach(i=>{if(!ok.has(i))orgPh.delete(i);});}}catch(_){}
   if(!orgD){box.innerHTML='<div class="vempty">조직도를 불러오는 중…</div>';orgLoad().then(()=>{if($('tmSheet').classList.contains('open')&&tmView==='board')orgRender();});return;}
   const gid=orgG(),g0=gid?TS2.groups.find(x=>x.id===gid):null,u=gid?null:orgD.units.find(x=>x.id===orgSel),path=gid?[{name:'내 그룹'},{name:g0?g0.name:'그룹'}]:(u?orgPath(u.id):[]);
   const tabs=(gid?[['mem','구성원']]:[['mem','구성원'],['plan','일정'],['log','인수인계']]).map(([k,n])=>`<button data-ot2="${k}" class="${orgTab===k?'on':''}">${n}</button>`).join('');
@@ -7361,14 +7362,14 @@ $('tmBody').addEventListener('click',async e=>{
   const re=async()=>{await orgLoad();orgRender();};
   if(t0.id==='osmAll'){const v=orgVisible(),all=v.every(p=>orgPh.has(p.id));v.forEach(p=>all?orgPh.delete(p.id):orgPh.add(p.id));return orgRender();}
   if(t0.id==='osmClr'){orgPh.clear();return orgRender();}
-  if(t0.id==='osmMail'){const L=orgD.people.filter(p=>orgPh.has(p.id)&&p.email);if(!L.length)return;
+  if(t0.id==='osmMail'){const L=orgVisible().filter(p=>orgPh.has(p.id)&&p.email);if(!L.length){toastMsg('선택한 사람 중 메일이 있는 사람이 없어요');return;}
     const who=(typeof myName==='function'&&myName())||'';
     const body=(who?`${who}님이 TY-Scheduler 일정 앱에 초대합니다.\n\n`:'')+orgSmsText()+`\nQR 이미지: ${orgSite().replace(/\/?$/,'/')}qr.png`;
     const sep=/Windows/i.test(navigator.userAgent)?';':',';
     const to=L.map(p=>p.email).join(sep),subj='[TY-Scheduler] 일정 앱 안내 및 참여 코드'+(who?` (${who})`:'');
     mailPick(to,subj,body);
     return;}
-  if(t0.id==='osmSend'){const L=orgD.people.filter(p=>orgPh.has(p.id)&&p.phone);if(!L.length)return;
+  if(t0.id==='osmSend'){const L=orgVisible().filter(p=>orgPh.has(p.id)&&p.phone);if(!L.length){toastMsg('선택한 사람 중 연락처가 있는 사람이 없어요');return;}
     const ios=/iPhone|iPad|Mac/.test(navigator.userAgent)&&'ontouchend' in document;
     location.href=`sms:${L.map(p=>p.phone).join(',')}${ios?'&':'?'}body=${encodeURIComponent(orgSmsText())}`;return;}
   if(t0.id==='osmQr'){try{const svg=tsQr(orgSite()),url=URL.createObjectURL(new Blob([svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"')],{type:'image/svg+xml'}));
@@ -10143,7 +10144,7 @@ function buildCaps(data,allowUndated){
   if(data&&data.lines&&data.lines.length)rows=data.lines.map(l=>({t:l.text,c:l.confidence==null?100:l.confidence}));
   else rows=((data&&data.text)||'').split(/\n+/).map(t=>({t,c:100}));
   const dict=ocrDict();
-  rows=rows.map(r=>({t:ocrFix(clean(r.t),dict),c:r.c})).filter(r=>r.t.length>=3&&/[가-힣A-Za-z限]/.test(r.t));
+  rows=rows.map(r=>({t:ocrFix(clean(r.t),dict),c:r.c})).filter(r=>r.t.length>=3&&/[가-힣A-Za-z]/.test(r.t));
   const seen=new Set(),out=[];let skipped=0;
   const subjBefore=i=>{for(let j=i-1;j>=0;j--){const m=rows[j].t.match(SUBJ_RE);if(m)return m[1].trim();}
     for(let j=i+1;j<rows.length;j++){const m=rows[j].t.match(SUBJ_RE);if(m)return m[1].trim();}return null;};
@@ -10165,8 +10166,6 @@ function buildCaps(data,allowUndated){
       let sj=subjBefore(i);
       if(!sj){for(let j=i-1;j>=0;j--){if(!DT2.test(rows[j].t)&&rows[j].t.length>=4){sj=rows[j].t.replace(/^\s*\d{1,2}\s*[.)]\s*/,'').replace(/^[^:：]{1,6}[:：]\s*/,'');break;}}}
       if(sj&&sj.length>=2){note=line.replace(/^\s*(?:\d{1,2}\s*[.)]\s*)?[^:：]{1,6}[:：]\s*/,'').trim();t=sj;}}
-    if(t.length<2&&dated){/* 날짜만 있고 제목이 없는 줄('11/26(목) 限')은 바로 앞 제목 줄을 제목으로 */
-      for(let j=i-1;j>=0;j--){if(!DT2.test(rows[j].t)&&rows[j].t.length>=3){t=rows[j].t.replace(/^\s*\d{1,2}\s*[.)]\s*/,'').replace(/^[\-•·▶▪●○◆◇※:\s]+/,'').trim();note=line.replace(/\s+/g,' ');break;}}}
     if(t.length<2){skipped++;return;}
     const key=p.date+'|'+(p.time||'')+'|'+t;if(seen.has(key))return;seen.add(key);
     out.push({on:dated,raw:line,date:p.date,endDate:p.endDate,time:p.time,endTime:p.endTime,pri:p.pri,note,
@@ -10175,7 +10174,7 @@ function buildCaps(data,allowUndated){
   /* 내 이름이 들어간 줄: 문서 속 날짜(기한)에 내 담당 일정으로 올림 */
   const me=(store.settings&&store.settings.name||'').trim();
   if(me&&me.length>=2){
-    const mine=rows.filter(r=>(r.t.includes(me)||(me.length===3&&(r.t.includes(me.slice(0,2))||r.t.includes(me.slice(1)))))&&!DT2.test(r.t));
+    const mine=rows.filter(r=>r.t.includes(me)&&!DT2.test(r.t));
     const dl=rows.filter(r=>DT2.test(r.t)).map(r=>({r,p:parseInput(r.t,sel)}));
     if(mine.length&&dl.length){
       const base=dl[0];
