@@ -9,7 +9,7 @@
 <script>try{var d=document.documentElement,__t=localStorage.getItem("theme2")||"light",__k=localStorage.getItem("skin")||"";d.setAttribute("data-theme",__t);if(__k&&__k!=="light"&&__k!=="dark")d.setAttribute("data-skin",__k);d.setAttribute("data-layout",localStorage.getItem("layout")||"focus");var __f=localStorage.getItem("font")||"";if(__f&&__f!=="sys")d.setAttribute("data-font",__f)}catch(e){document.documentElement.setAttribute("data-theme","light");document.documentElement.setAttribute("data-layout","focus")}</script>
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
-<meta name="app-ver" content="v247">
+<meta name="app-ver" content="v248">
 <link rel="icon" type="image/png" href="icons/icon-192.png?v=2">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=2">
 <title>TY-Scheduler</title>
@@ -6384,7 +6384,7 @@ function ntcShow(title,msg,act,actLabel){
   const x=document.createElement('button');x.textContent='확인';x.onclick=close;r.appendChild(x);
   d.append(b,p,r);box.appendChild(d);box.classList.add('on');
 }
-const RELNOTE='그룹 화면에서 구성원을 추가했을 때 반영되지 않거나 오류가 조용히 사라지던 문제를 고쳤어요. 추가하면 바로 그 그룹 목록에 나오고, 실패하면 이유가 화면에 떠요.';
+const RELNOTE='그룹 화면에서 구성원을 추가했을 때 반영되지 않거나 오류가 조용히 사라지던 문제를 고쳤어요. 추가하면 바로 그 그룹 목록에 나오고, 실패하면 이유가 화면에 떠요. 캡처에서 "11/26(목) 限"처럼 날짜만 있는 줄도 앞 제목 줄을 가져오고, 글자 인식이 이름을 한 글자 틀리게 읽어도 내 담당 줄을 찾아요.';
 function verNotice(){
   let last=null;try{last=localStorage.getItem('tyLastVer');localStorage.setItem('tyLastVer',APPVER);}catch(_){return;}
   if(last&&last!==APPVER)ntcShow('최신 버전으로 업데이트되었습니다',APPVER+' · '+RELNOTE);
@@ -9345,7 +9345,7 @@ async function tsSaveMemo(inp){const b=inp.value.trim();if(!b||!tsTid())return;i
   if(r.error){toastMsg('메모를 저장하지 못했습니다');inp.value=b;return;}tsLoadMemos();}
 $('ts').addEventListener('keydown',e=>{if(e.target.classList&&e.target.classList.contains('tsqi')&&e.key==='Enter'&&!e.isComposing){e.preventDefault();tsSaveMemo(e.target);}});
 $('ts').addEventListener('focusout',e=>{if(e.target.classList&&e.target.classList.contains('tsqi')&&e.target.value.trim())tsSaveMemo(e.target);});
-const APPVER=/*ver*/'v247';
+const APPVER=/*ver*/'v248';
 (function(){const e=$('verTxt');if(e)e.textContent=APPVER;})();
 /* GitHub 에 올라온 파일을 직접 읽어 새 버전이 있는지 확인한다 */
 let updSeen=null;
@@ -10143,7 +10143,7 @@ function buildCaps(data,allowUndated){
   if(data&&data.lines&&data.lines.length)rows=data.lines.map(l=>({t:l.text,c:l.confidence==null?100:l.confidence}));
   else rows=((data&&data.text)||'').split(/\n+/).map(t=>({t,c:100}));
   const dict=ocrDict();
-  rows=rows.map(r=>({t:ocrFix(clean(r.t),dict),c:r.c})).filter(r=>r.t.length>=3&&/[가-힣A-Za-z]/.test(r.t));
+  rows=rows.map(r=>({t:ocrFix(clean(r.t),dict),c:r.c})).filter(r=>r.t.length>=3&&/[가-힣A-Za-z限]/.test(r.t));
   const seen=new Set(),out=[];let skipped=0;
   const subjBefore=i=>{for(let j=i-1;j>=0;j--){const m=rows[j].t.match(SUBJ_RE);if(m)return m[1].trim();}
     for(let j=i+1;j<rows.length;j++){const m=rows[j].t.match(SUBJ_RE);if(m)return m[1].trim();}return null;};
@@ -10165,6 +10165,8 @@ function buildCaps(data,allowUndated){
       let sj=subjBefore(i);
       if(!sj){for(let j=i-1;j>=0;j--){if(!DT2.test(rows[j].t)&&rows[j].t.length>=4){sj=rows[j].t.replace(/^\s*\d{1,2}\s*[.)]\s*/,'').replace(/^[^:：]{1,6}[:：]\s*/,'');break;}}}
       if(sj&&sj.length>=2){note=line.replace(/^\s*(?:\d{1,2}\s*[.)]\s*)?[^:：]{1,6}[:：]\s*/,'').trim();t=sj;}}
+    if(t.length<2&&dated){/* 날짜만 있고 제목이 없는 줄('11/26(목) 限')은 바로 앞 제목 줄을 제목으로 */
+      for(let j=i-1;j>=0;j--){if(!DT2.test(rows[j].t)&&rows[j].t.length>=3){t=rows[j].t.replace(/^\s*\d{1,2}\s*[.)]\s*/,'').replace(/^[\-•·▶▪●○◆◇※:\s]+/,'').trim();note=line.replace(/\s+/g,' ');break;}}}
     if(t.length<2){skipped++;return;}
     const key=p.date+'|'+(p.time||'')+'|'+t;if(seen.has(key))return;seen.add(key);
     out.push({on:dated,raw:line,date:p.date,endDate:p.endDate,time:p.time,endTime:p.endTime,pri:p.pri,note,
@@ -10173,7 +10175,7 @@ function buildCaps(data,allowUndated){
   /* 내 이름이 들어간 줄: 문서 속 날짜(기한)에 내 담당 일정으로 올림 */
   const me=(store.settings&&store.settings.name||'').trim();
   if(me&&me.length>=2){
-    const mine=rows.filter(r=>r.t.includes(me)&&!DT2.test(r.t));
+    const mine=rows.filter(r=>(r.t.includes(me)||(me.length===3&&(r.t.includes(me.slice(0,2))||r.t.includes(me.slice(1)))))&&!DT2.test(r.t));
     const dl=rows.filter(r=>DT2.test(r.t)).map(r=>({r,p:parseInput(r.t,sel)}));
     if(mine.length&&dl.length){
       const base=dl[0];
