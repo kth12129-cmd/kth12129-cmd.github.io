@@ -9,7 +9,7 @@
 <script>try{var d=document.documentElement,__t=localStorage.getItem("theme2")||"light",__k=localStorage.getItem("skin")||"";d.setAttribute("data-theme",__t);if(__k&&__k!=="light"&&__k!=="dark")d.setAttribute("data-skin",__k);d.setAttribute("data-layout",localStorage.getItem("layout")||"focus");var __f=localStorage.getItem("font")||"";if(__f&&__f!=="sys")d.setAttribute("data-font",__f)}catch(e){document.documentElement.setAttribute("data-theme","light");document.documentElement.setAttribute("data-layout","focus")}</script>
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
-<meta name="app-ver" content="v242">
+<meta name="app-ver" content="v243">
 <link rel="icon" type="image/png" href="icons/icon-192.png?v=2">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=2">
 <title>TY-Scheduler</title>
@@ -6381,7 +6381,7 @@ function ntcShow(title,msg,act,actLabel){
   const x=document.createElement('button');x.textContent='확인';x.onclick=close;r.appendChild(x);
   d.append(b,p,r);box.appendChild(d);box.classList.add('on');
 }
-const RELNOTE='아침 알림에서 시간을 정하지 않은 일정 앞의 "종일" 글자를 뺐어요. 시간을 정한 일정만 시간이 함께 보여요.';
+const RELNOTE='캡처에서 사진을 고르거나 찍으면 자르기·복사·붙여넣기 없이 바로 글자를 읽어 일정을 보여줘요. 아이폰도 같은 방식이에요.';
 function verNotice(){
   let last=null;try{last=localStorage.getItem('tyLastVer');localStorage.setItem('tyLastVer',APPVER);}catch(_){return;}
   if(last&&last!==APPVER)ntcShow('최신 버전으로 업데이트되었습니다',APPVER+' · '+RELNOTE);
@@ -9302,7 +9302,7 @@ async function tsSaveMemo(inp){const b=inp.value.trim();if(!b||!tsTid())return;i
   if(r.error){toastMsg('메모를 저장하지 못했습니다');inp.value=b;return;}tsLoadMemos();}
 $('ts').addEventListener('keydown',e=>{if(e.target.classList&&e.target.classList.contains('tsqi')&&e.key==='Enter'&&!e.isComposing){e.preventDefault();tsSaveMemo(e.target);}});
 $('ts').addEventListener('focusout',e=>{if(e.target.classList&&e.target.classList.contains('tsqi')&&e.target.value.trim())tsSaveMemo(e.target);});
-const APPVER=/*ver*/'v242';
+const APPVER=/*ver*/'v243';
 (function(){const e=$('verTxt');if(e)e.textContent=APPVER;})();
 /* GitHub 에 올라온 파일을 직접 읽어 새 버전이 있는지 확인한다 */
 let updSeen=null;
@@ -10238,8 +10238,8 @@ function openCap(){
   closeFind();capUI();$('capSheet').classList.add('open');
 }
 $('capDrop').onclick=()=>{$('capFile').click();};
-$('capFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f){capPhoto=f.type!=='image/png';openCrop(f);}e.target.value='';};
-$('capCam').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f){capPhoto=true;openCrop(f);}e.target.value='';};
+$('capFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f){capPhoto=f.type!=='image/png';capRun(f);}e.target.value='';};
+$('capCam').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f){capPhoto=true;capRun(f);}e.target.value='';};
 ['dragenter','dragover'].forEach(ev=>$('capDrop').addEventListener(ev,e=>{
   e.preventDefault();$('capDrop').classList.add('over');}));
 ['dragleave','drop'].forEach(ev=>$('capDrop').addEventListener(ev,e=>{
@@ -10558,7 +10558,7 @@ async function crOut(){
   return toFile(c,'crop-'+Date.now()+'.png');
 }
 $('crOk').onclick=async()=>{const f=await crOut();closeCrop();$('capSheet').classList.add('open');
-  if(isIOS&&capPhoto){capPhoto=false;txtFile=f;capReset();txtOpen(f);}else capRun(f);};
+  capRun(f);};
 $('crSave').onclick=async()=>{const f=await crOut();closeCrop();attachImage(f,null);toastMsg('이미지로 저장했어요');};
 let lbId=null;
 function openLB(id){
