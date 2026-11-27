@@ -8787,9 +8787,11 @@ async function doPush(){
     pushing=true;dirty=false;setSync('busy','저장 중…');
     const {error}=await SB.from('app_state')
       .upsert({user_id:session.user.id,data:payload(),updated_at:new Date().toISOString()});
-    if(error){setSync('busy','저장 실패 · 재시도');dirty=true;}
+    /* 인증 오류가 계속되면 3초마다 서버를 두드리지 않고 30초 간격으로 늦춘다 */
+    const authErr=!!error&&(error.code==='PGRST301'||error.status===401||/jwt|expired|unauthor/i.test(error.message||''));
+    if(error){setSync('busy',authErr?'로그인 만료 · 다시 로그인해 주세요':'저장 실패 · 재시도');dirty=true;}
     else{setSync('on','동기화됨 · '+(session.user.email||''));syncShared();}
-    pushing=false;if(dirty)setTimeout(doPush,3000);
+    pushing=false;if(dirty)setTimeout(doPush,authErr?30000:3000);
     return;
   }
   if(backend==='claude'&&docRef){
@@ -9531,13 +9533,49 @@ function sbInit(){
   if(!cfg||!cfg.url||!cfg.key)return false;
   if(!window.supabase){setSync('','라이브러리 로드 실패');return false;}
   try{
-    SB=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true}});
+    /* 모든 Supabase 요청 공통: 401(로그인 토큰 만료)이면 토큰을 갱신하고 한 번만 재시도한다.
+       갱신 자체가 인증 오류로 거절되면(로그인 정보 폐기) 이 기기 로그인만 해제해 다시 로그인하게 한다.
+       네트워크 오류일 때는 로그아웃하지 않는다. */
+    const sbFetch=async(input,init)=>{
+      const res=await fetch(input,init);
+      if(res.status!==401)return res;
+      const url=typeof input==='string'?input:(input&&input.url)||'';
+      if(/\/auth\/v1\//.test(url)||!SB)return res;
+      try{
+        const{data,error}=await SB.auth.refreshSession();
+        if(error)throw error;
+        if(!data||!data.session)throw new Error('no-session');
+        const h=new Headers((init&&init.headers)||{});
+        h.set('Authorization','Bearer '+data.session.access_token);
+        return await fetch(input,Object.assign({},init,{headers:h}));
+      }catch(e){
+        if(e&&e.name==='AuthApiError'||(e&&(e.status===400||e.status===401||e.status===403))||(e&&e.message==='no-session')){
+          try{setSync('busy','로그인 만료 · 다시 로그인해 주세요');await SB.auth.signOut({scope:'local'});}catch(_){}
+        }
+        return res;
+      }
+    };
+    SB=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true},global:{fetch:sbFetch}});
   }catch(e){setSync('','서버 설정 오류');return false;}
   backend='sb';
   SB.auth.onAuthStateChange((ev,sess)=>{session=sess;if(ev==='PASSWORD_RECOVERY'){recovering=true;try{renderAuth();$('authSheet').classList.add('open');}catch(_){}}onAuth();});
   SB.auth.getSession().then(({data})=>{session=data.session;if(LINKERR){try{history.replaceState(null,'',location.pathname);window._linkMsg='⚠ 방금 누른 메일 링크는 이미 사용했거나 더 새로운 메일이 와서 무효가 된 링크입니다.\n→ 위 이메일 칸에 주소를 적고 [비밀번호를 잊으셨나요?]를 한 번만 누른 뒤, Gmail에서 맨 아래(가장 최근) 메일의 링크만 누르세요. 이전 메일은 삭제하세요.';renderAuth();$('authSheet').classList.add('open');}catch(_){}}if(RECOV&&session){recovering=true;try{renderAuth();$('authSheet').classList.add('open');}catch(_){}}onAuth();});
   return true;
 }
+/* 새 버전 자동 감지: 사이트의 index.html 이 바뀌면(ETag/Last-Modified) 저장할 내용이 없을 때 새로고침한다.
+   브라우저/설치 앱의 HTTP 캐시(약 10분) 때문에 새 버전이 늦게 보이는 문제를 줄인다. */
+(function(){
+  let cur=null;
+  const sig=async()=>{try{const r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'});
+    return r.ok?(r.headers.get('etag')||r.headers.get('last-modified')||null):null;}catch(_){return null;}};
+  const check=async()=>{const s=await sig();if(!s)return;
+    if(cur===null){cur=s;return;}
+    if(s!==cur){if(typeof dirty!=='undefined'&&(dirty||pushing))return;location.reload();}};
+  if(!/^https?:$/.test(location.protocol))return;
+  setTimeout(check,3000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
+  setInterval(check,300000);
+})();
 async function onAuth(){
   renderAuth();
   document.documentElement.classList.toggle('noauth',!session);document.documentElement.classList.toggle('authin',!!session);
